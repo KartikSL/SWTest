@@ -1,43 +1,47 @@
 #' @title sw_test
 #'
-#' @description Provides an overview table for the time and scope conditions of
-#'     a data set
+#' @description Performs a hypothesis test for the network small-world property
 #'
-#' @param dat A data set object
-#' @param id Scope (e.g., country codes or individual IDs)
-#' @param time Time (e.g., time periods are given by years, months, ...)
+#' @param graph An input network
+#' @param baseline.model Model to test against
+#' @param num.iter Number of bootstrap iterations
 #'
-#' @return A data frame object that contains a summary of a sample that
-#'     can later be converted to a TeX output using \code{overview_print}
+#' @return Prints result of the test
 #' @examples
+#' data(dolphins)
+#' sw_test(dolphins, "ER", 100)
 #' @export
 
 sw_test <- function(graph, baseline.model, num.iter){
 
-  if(startsWith(baseline.model, "E")){
+  if(startsWith(tolower(baseline.model), "e")){
     res <- small_world_ER(graph, num.iter)
   }
-  else if(startsWith(baseline.model, "S")){
+  else if(startsWith(tolower(baseline.model), "s")){
     res <- small_world_SBM(graph, num.iter)
   }
-  else if(startsWith(baseline.model, "D")){
+  else if(startsWith(tolower(baseline.model), "d")){
     res <- small_world_DCSBM(graph, num.iter)
   }
-  else if(startsWith(baseline.model, "C")){
+  else if(startsWith(tolower(baseline.model), "c")){
     res <- small_world_CL(graph, num.iter)
   }
-  else if(startsWith(baseline.model, "A")){
+  else if(startsWith(tolower(baseline.model), "a")){
     res.er <- small_world_ER(graph, num.iter)
     res.sbm <- small_world_SBM(graph, num.iter)
     res.dcsbm <- small_world_DCSBM(graph, num.iter)
     res.cl <- small_world_CL(graph, num.iter)
+    res.out <- list(res.er, res.sbm, res.dcsbm, res.cl)
+    model.list <- list("ER", "SBM", "DCSBM", "Chung-Lu")
+    for(i in 1:4){
+      sw_print_res(res.out[[i]], model.list[[i]])
+    }
   }
   else{
-
+    cat("Invalid input/n")
   }
 }
 
-# To do:
-# Decide output format
-# Add documentation for internal functions
-# Add example for main function
+
+# Add messages in functions
+# Add documentation for all functions

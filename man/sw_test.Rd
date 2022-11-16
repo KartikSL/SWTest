@@ -7,17 +7,19 @@
 sw_test(graph, baseline.model, num.iter)
 }
 \arguments{
-\item{dat}{A data set object}
+\item{graph}{An input network}
 
-\item{id}{Scope (e.g., country codes or individual IDs)}
+\item{baseline.model}{Model to test against}
 
-\item{time}{Time (e.g., time periods are given by years, months, ...)}
+\item{num.iter}{Number of bootstrap iterations}
 }
 \value{
-A data frame object that contains a summary of a sample that
-can later be converted to a TeX output using \code{overview_print}
+Prints result of the test
 }
 \description{
-Provides an overview table for the time and scope conditions of
-a data set
+Performs a hypothesis test for the network small-world property
+}
+\examples{
+data(dolphins)
+sw_test(dolphins, "ER", 100)
 }

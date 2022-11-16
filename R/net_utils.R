@@ -82,3 +82,10 @@ sample_from_CL <- function(P){
   G <- igraph::graph_from_adjacency_matrix(A, mode = "undirected")
   return(G)
 }
+
+sw_print_res <- function(res, baseline.model){
+  cat("\nTest against ", baseline.model, "\n")
+  cat("Alternative hypothesis: Beta is not equal to 0 or 1\n")
+  cat("Clustering coefficient: ", res[[3]], ", p-value for clustering coefficient: ", res[[1]], "\n")
+  cat("Average path length: ", res[[4]], ", p-value for clustering coefficient: ", res[[2]], "\n")
+}
