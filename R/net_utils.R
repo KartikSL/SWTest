@@ -1,0 +1,84 @@
+
+dcspectral <- function(x, n, k){
+  d <- rowSums(x)
+  d <- d + mean(d)
+  deg <- diag(1/sqrt(d))
+  l <- deg %*% x %*% deg
+  if(!isSymmetric(l)){
+    l <- (l + t(l))/2
+  }
+  spectra <- eigen(l)
+  specmat <- spectra$vectors[, 1:k]
+  rownorm <- apply(specmat, 1, function(a){(sum(a^2))^0.5})
+  rownorm <- ifelse(rownorm < 10^(-06), 10^(-06), rownorm)
+  specnorm <- specmat/rownorm
+  speck <- kmeans(specnorm, k, nstart=5)
+  return(speck$cluster)
+}
+
+get_P_SBM <- function(n, k, p, clusters){
+  Z <- matrix(0, n, k)
+  for(i in 1:n){
+    Z[i, clusters[i]] <- 1
+  }
+  P <- Z%*%p%*%t(Z)
+  return(P)
+}
+
+sample_from_SBM <- function(n, P){
+  A <- matrix(0, n, n)
+  for(l in 1:(n - 1)){
+    for(j in (l + 1):n){
+      A[l, j] <- rbinom(1,1, P[l, j])
+      A[j, l] <- A[l, j]
+    }
+  }
+  G <- igraph::graph_from_adjacency_matrix(A, mode= "undirected")
+  return(G)
+}
+
+get_P_DCSBM <- function(n, k, theta, p, clusters){
+  Z <- matrix(0, n, k)
+  for(i in 1:n){
+    Z[i, clusters[i]] <- 1
+  }
+  P <- diag(theta)%*%Z%*%p%*%t(Z)%*%diag(theta)
+  return(P)
+}
+
+sample_from_DCSBM <- function(n, P){
+
+  A <- matrix(0, n, n)
+
+  for(l in 1:(n - 1)){
+    for(j in (l + 1):n){
+      A[l, j] <- ifelse(rpois(1, P[l, j]) >= 1, 1, 0)
+      A[j, l] <- A[l, j]
+    }
+  }
+  G <- igraph::graph_from_adjacency_matrix(A)
+  return(G)
+}
+
+cl_dist <- function(g){
+  if(igraph::is_connected(g)){
+    return(igraph::mean_distance(g))
+  }
+  dist.mat <- igraph::distances(g)
+  #Get off diagonal elements
+  dist <- dist.mat[row(dist.mat) != col(dist.mat)]
+  #Replace inf distances with diamater
+  dist[dist == Inf] <- igraph::diameter(g)
+  return(mean(dist))
+}
+
+sample_from_CL <- function(P){
+  n <- nrow(P)
+  A <- matrix(0, nrow = n, ncol = n)
+  A[col(A) > row(A)] <- runif(n*(n - 1)/2)
+  A <- A + t(A)
+  diag(A) <- runif(n)
+  A <- (A < P) + 0
+  G <- igraph::graph_from_adjacency_matrix(A, mode = "undirected")
+  return(G)
+}
