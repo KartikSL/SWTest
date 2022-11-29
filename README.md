@@ -5,8 +5,14 @@ An R package which implements the methods in [Testing for the Network Small-Worl
 ## Installation
 
 ``` r
-    library(devtools)
-    install_github(KartikSL/SWTest)
+library(devtools)
+install_github(KartikSL/SWTest)
 ```
 
 ## Example Usage
+
+``` r
+library(SWTest)
+data(dolphins)
+sw_test(dolphins, "ER", 100)
+```
