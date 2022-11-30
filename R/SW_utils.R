@@ -1,5 +1,10 @@
-
-small_world_ER <-function(G, b){
+#' Conducts bootstrap test against ER
+#' @param x adjacency matrix
+#' @param b number of bootstrap iterations
+#' @keywords internal
+#' @noRd
+small_world_ER <- function(x, b){
+  G <- igraph::graph_from_adjacency_matrix(x, mode = "undirected")
   n <- igraph::gorder(G)
   L <- igraph::mean_distance(G)
   C <- igraph::transitivity(G, type = "global")
@@ -12,6 +17,9 @@ small_world_ER <-function(G, b){
     Gstar <- igraph::sample_gnp(n = n, p = phat)
     Lstar[iter] <- igraph::mean_distance(Gstar)
     tstar[iter] <- igraph::transitivity(Gstar, type = "global")
+    if(iter%%50 == 0){
+      cat("Iteration ", iter, "\n")
+    }
   }
 
   pval1 <- sum(tstar > C)/b
@@ -21,15 +29,21 @@ small_world_ER <-function(G, b){
               coef1 = C, coef2 = L))
 }
 
-small_world_SBM <- function(G, b){
+#' Conducts bootstrap test against SBM
+#' @param x adjacency matrix
+#' @param b number of bootstrap iterations
+#' @keywords internal
+#' @noRd
+small_world_SBM <- function(x, b){
 
+  G <- igraph::graph_from_adjacency_matrix(x, mode = "undirected")
   n <- igraph::gorder(G)
   L <- igraph::mean_distance(G)
   C <- igraph::transitivity(G, type = "global")
   A <- igraph::as_adj(G, type = "both", sparse = FALSE)
 
   k <- length(igraph::cluster_louvain(G))
-  clusters <- dcspectral(igraph::as_adj(G, type = "both", sparse=FALSE), n, k)
+  clusters <- dcspectral(igraph::as_adj(G, type = "both", sparse = FALSE), n, k)
 
   ones <- matrix(1, n, n)
   diag(ones) <- 0
@@ -50,6 +64,9 @@ small_world_SBM <- function(G, b){
     Gstar <- sample_from_SBM(n, P)
     Lstar[iter] <- igraph::mean_distance(Gstar)
     tstar[iter] <- igraph::transitivity(Gstar, type = "global")
+    if(iter%%50 == 0){
+      cat("Iteration ",iter, "\n")
+    }
   }
 
   pval1 = sum(tstar > C)/b
@@ -60,8 +77,14 @@ small_world_SBM <- function(G, b){
 
 }
 
-small_world_DCSBM <-function(G, b){
+#' Conducts bootstrap test against DCSBM
+#' @param x adjacency matrix
+#' @param b number of bootstrap iterations
+#' @keywords internal
+#' @noRd
+small_world_DCSBM <- function(x, b){
 
+  G <- igraph::graph_from_adjacency_matrix(x, mode = "undirected")
   n <- igraph::gorder(G)
   L <- igraph::mean_distance(G)
   C <- igraph::transitivity(G, type = "global")
@@ -96,6 +119,9 @@ small_world_DCSBM <-function(G, b){
     Gstar <- sample_from_DCSBM(n, P)
     Lstar[iter] <- igraph::mean_distance(Gstar)
     tstar[iter] <- igraph::transitivity(Gstar, type = "global")
+    if(iter%%50 == 0){
+      cat("Iteration ",iter, "\n")
+    }
   }
 
   pval1 <- sum(tstar > C)/b
@@ -106,7 +132,14 @@ small_world_DCSBM <-function(G, b){
 
 }
 
+#' Conducts bootstrap test against CL
+#' @param x adjacency matrix
+#' @param b number of bootstrap iterations
+#' @keywords internal
+#' @noRd
 small_world_CL <- function(G, b){
+
+  G <- igraph::graph_from_adjacency_matrix(x, mode = "undirected")
   n <- igraph::gorder(G)
   d <- igraph::degree(G)
   P <- d %*%t (d)/sum(d)
@@ -122,6 +155,9 @@ small_world_CL <- function(G, b){
     Gstar <- sample_from_CL(P)
     Lstar[iter] <- cl_dist(Gstar)
     tstar[iter] <- igraph::transitivity(Gstar, type = "global")
+    if(iter%%50 == 0){
+      cat("Iteration ",iter, "\n")
+    }
   }
 
   pval1 <- sum(tstar > C)/b

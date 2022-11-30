@@ -4,14 +4,14 @@
 \alias{sw_test}
 \title{sw_test}
 \usage{
-sw_test(graph, baseline.model, num.iter)
+sw_test(x, model.list, num.iter)
 }
 \arguments{
-\item{graph}{An input network}
+\item{x}{A square adjacency matrix.}
 
-\item{baseline.model}{Model to test against}
+\item{model.list}{Vector of baseline models to test against. Possible values are ER, SBM, DCSBM and CL.}
 
-\item{num.iter}{Number of bootstrap iterations}
+\item{num.iter}{Vector of number of bootstrap iterations for each baseline model.}
 }
 \value{
 Prints result of the test
@@ -21,5 +21,5 @@ Performs a hypothesis test for the network small-world property
 }
 \examples{
 data(dolphins)
-sw_test(dolphins, "ER", 100)
+sw_test(dolphins, c("ER", "SBM"), c(100, 50))
 }
