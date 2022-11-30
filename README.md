@@ -6,7 +6,7 @@ An R package which implements the methods in [Testing for the Network Small-Worl
 
 ``` r
 library(devtools)
-install_github(KartikSL/SWTest)
+install_github("KartikSL/SWTest")
 ```
 
 ## Example Usage
