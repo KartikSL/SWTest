@@ -42,7 +42,3 @@ sw_test <- function(x, model.list, num.iter){
     sw_print_res(res.list[[iter]], model.list[iter])
   }
 }
-
-# Exact ER test
-# Remove rproj file
-# Change name?
