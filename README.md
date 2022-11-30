@@ -14,5 +14,5 @@ install_github(KartikSL/SWTest)
 ``` r
 library(SWTest)
 data(dolphins)
-sw_test(dolphins, "ER", 100)
+sw_test(dolphins, c("ER", "DCSBM"), c(500, 50))
 ```
